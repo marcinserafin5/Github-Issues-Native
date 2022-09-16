@@ -13,7 +13,8 @@ import React, {type PropsWithChildren} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import resultScreen from './screens/resultsScreen/resultScreen';
+import ResultScreen from './screens/resultsScreen/ResultScreen';
+
 import {Image, Button, TextInput} from 'react-native';
 import {Provider, useDispatch} from 'react-redux';
 import {createStore} from 'redux';
@@ -29,17 +30,17 @@ const Header = () => {
     <TextInput
       onChangeText={text => dispatch(setSearchValue(text))}
       style={{
-        borderColor: '#fff',
+        borderColor: '#D0D7DE',
         borderWidth: 1,
         borderRadius: 5,
-        height: '70%',
-        width: '75%',
+        width: 242,
+        height: 37,
         marginLeft: 'auto',
         color: '#fff',
         padding: 10,
       }}
       placeholder="Search"
-      placeholderTextColor={'#fff'}
+      placeholderTextColor={'#D0D7DE'}
     />
   );
 };
@@ -51,7 +52,7 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen
             name="results"
-            component={resultScreen}
+            component={ResultScreen}
             options={{
               headerTitle: props => (
                 <Image
@@ -66,7 +67,7 @@ const App = () => {
           />
           <Stack.Screen
             name="Profile"
-            component={resultScreen}
+            component={ResultScreen}
             options={{
               headerTitle: props => (
                 <Image
