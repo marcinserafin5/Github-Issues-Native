@@ -1,13 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React, {type PropsWithChildren} from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -20,9 +10,12 @@ import {Provider, useDispatch} from 'react-redux';
 import {createStore} from 'redux';
 import reducer from './redux/reducers';
 import {setSearchValue} from './redux/actions';
+import {ApolloClient, InMemoryCache, ApolloProvider, gql} from '@apollo/client';
 
 const Stack = createNativeStackNavigator();
 const store = createStore(reducer);
+
+
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -46,43 +39,50 @@ const Header = () => {
 };
 
 const App = () => {
+  const client = new ApolloClient({
+    uri: 'https://api.github.com/graphql',
+    cache: new InMemoryCache(),
+    headers:{Authorization:'bearer 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'}
+  });
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="results"
-            component={ResultScreen}
-            options={{
-              headerTitle: props => (
-                <Image
-                  source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
-                />
-              ),
-              headerStyle: {
-                backgroundColor: '#000',
-              },
-              headerRight: props => <Header />,
-            }}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={ResultScreen}
-            options={{
-              headerTitle: props => (
-                <Image
-                  source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
-                />
-              ),
-              headerStyle: {
-                backgroundColor: '#000',
-              },
-              headerRight: props => <Header />,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="results"
+              component={ResultScreen}
+              options={{
+                headerTitle: props => (
+                  <Image
+                    source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
+                  />
+                ),
+                headerStyle: {
+                  backgroundColor: '#000',
+                },
+                headerRight: props => <Header />,
+              }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ResultScreen}
+              options={{
+                headerTitle: props => (
+                  <Image
+                    source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
+                  />
+                ),
+                headerStyle: {
+                  backgroundColor: '#000',
+                },
+                headerRight: props => <Header />,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </ApolloProvider>
   );
 };
 
