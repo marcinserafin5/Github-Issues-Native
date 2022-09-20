@@ -38,10 +38,13 @@ const Header = () => {
 };
 
 const App = () => {
+
+  const personalAccessToken = "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"
+
   const client = new ApolloClient({
     uri: 'https://api.github.com/graphql',
     cache: new InMemoryCache(),
-    headers: {Authorization: 'bearer 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'},
+    headers: {Authorization: `bearer ${personalAccessToken}` },
   });
   return (
     <ApolloProvider client={client}>
