@@ -11,7 +11,6 @@ const ResultScreen = () => {
   const store = useSelector(getSearchValue);
 
   useEffect(() => {
-    console.log(store.searchValue);
     refetch({
       query: store.searchValue,
     });
