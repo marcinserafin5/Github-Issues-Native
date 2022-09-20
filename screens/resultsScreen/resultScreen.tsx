@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
   },
   disabledTextStyle: {
     height: 17,
-    fontFamily: 'Roboto',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: 14,
@@ -89,7 +88,6 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     height: 17,
-    fontFamily: 'Roboto',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: 14,

@@ -5,7 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import ResultScreen from './screens/resultsScreen/ResultScreen';
 
-import {Image, Button, TextInput} from 'react-native';
+import {Image, Button, TextInput, Text} from 'react-native';
 import {Provider, useDispatch} from 'react-redux';
 import {createStore} from 'redux';
 import reducer from './redux/reducers';
@@ -41,7 +41,7 @@ const App = () => {
   const client = new ApolloClient({
     uri: 'https://api.github.com/graphql',
     cache: new InMemoryCache(),
-    headers: {Authorization: 'bearer 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'},
+    headers: {Authorization: 'bearer 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'},
   });
   return (
     <ApolloProvider client={client}>
@@ -52,7 +52,8 @@ const App = () => {
               name="results"
               component={ResultScreen}
               options={{
-                headerTitle: props => (
+                title: '',
+                headerLeft: props => (
                   <Image
                     source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
                   />
@@ -67,12 +68,9 @@ const App = () => {
               name="User"
               component={UserScreen}
               options={{
-                headerTitle: props => (
+                title: '',
+                headerLeft: props => (
                   <Image
-                    style={{
-                      left: 0,
-                      position: 'absolute',
-                    }}
                     source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
                   />
                 ),
