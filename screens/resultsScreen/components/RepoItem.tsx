@@ -1,20 +1,21 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Button,
-  Text,
-  Image,
-} from 'react-native';
-
-// import BottomSheet from "reanimated-bottom-sheet";
-
-// import ScrollView from "react-native-gesture-handler"
+import moment from 'moment';
+import React from 'react';
+import {StyleSheet, View, Text, Image, Button} from 'react-native';
 
 const RepoItem = (props: any) => {
+  const calculateDateDiff = () => {
+    const diffDate = Math.abs(
+      Date.now() - new Date(props.repo.updatedAt).getTime(),
+    );
+    const diffDays = Math.ceil(diffDate / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 31) return `Updated ${diffDays} days ago`;
+    else
+      return `Updated on ${moment(
+        new Date(props.repo.updatedAt).getTime(),
+      ).format('DD MMM YYYY')}`;
+  };
+
   return (
     <View style={styles.home}>
       <Image
@@ -30,12 +31,24 @@ const RepoItem = (props: any) => {
       <Text style={{fontSize: 16, fontWeight: '500', color: '#6F7781'}}>
         {props.repo.description}
       </Text>
-      <View style={{marginTop: 8, flexDirection: 'row', alignItems: 'center'}}>
-      <Image
-       style={{marginRight:2}}
-        source={require('../../../assets/star.png')}
-      />
-        <Text style={{fontSize: 12, fontWeight: '500', color: '#6F7781',marginRight:5}}>
+      <View
+        style={{
+          marginTop: 8,
+          flexDirection: 'row',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}>
+        <Image
+          style={{marginRight: 2}}
+          source={require('../../../assets/star.png')}
+        />
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: '#6F7781',
+            marginRight: 5,
+          }}>
           {props.repo.stargazerCount}
         </Text>
         <View
@@ -43,18 +56,36 @@ const RepoItem = (props: any) => {
             width: 12,
             height: 12,
             borderRadius: 10,
-            backgroundColor: props.repo.languages.edges[0]?.node?.color,marginRight:5
+            backgroundColor: props.repo.languages.edges[0]?.node?.color,
+            marginRight: 5,
           }}
         />
-        <Text style={{fontSize: 12, fontWeight: '500', color: '#6F7781',marginRight:10}}>
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: '#6F7781',
+            marginRight: 10,
+          }}>
           {props.repo.languages.edges[0]?.node?.name}
         </Text>
-        <Text style={{fontSize: 12, fontWeight: '500', color: '#6F7781',marginRight:10}}>
-          {props.repo.updatedAt}
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: '#6F7781',
+            marginRight: 10,
+          }}>
+          {calculateDateDiff()}
         </Text>
-        <Text style={{fontSize: 12, fontWeight: '500', color: '#6F7781',marginRight:10}}>
-        {props.repo.licenseInfo?.name}
-
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: '#6F7781',
+            marginRight: 10,
+          }}>
+          {props.repo.licenseInfo?.name}
         </Text>
       </View>
     </View>

@@ -1,165 +1,40 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Button,
-  Text,
-  Image,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, ScrollView, View, Text, Image, Button} from 'react-native';
 import {getSearchValue} from '../../redux/selectors';
-import {useSelector, useDispatch} from 'react-redux';
-import axios from 'axios';
+import {useSelector} from 'react-redux';
 import UserItem from './components/UserItem';
 import RepoItem from './components/RepoItem';
 import {useQuery, gql} from '@apollo/client';
-// import BottomSheet from "reanimated-bottom-sheet";
-
-// import ScrollView from "react-native-gesture-handler"
+import { GET_REPOS, GET_USERS } from '../../consts/graphQL';
 
 const ResultScreen = () => {
-  const count = useSelector(getSearchValue);
-  const [reposData, setReposData] = useState<any>([
-    {id: 1, login: 'test'},
-    {id: 2, login: 'test2'},
-  ]);
-  const [userData, setUserData] = useState<any>([
-    {id: 1, login: 'test'},
-    {id: 2, login: 'test2'},
-  ]);
-
-  const getPublicRepos = () => {
-    axios
-      .get('https://api.github.com/repositories')
-      .then((res: any) => {
-        setReposData(res.data);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  };
-  const getUsers = () => {
-    axios
-      .get('https://api.github.com/users', {params: {per_page: 5}})
-      .then((res: any) => {
-        setUserData(res.data);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  };
-
-  const getSearchRepos = () => {
-    axios
-      .get('https://api.github.com/search/repositories', {
-        params: {per_page: 5, q: count.searchValue},
-      })
-      .then((res: any) => {
-        setReposData(res.data.items);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  };
-  const getSearchUsers = () => {
-    axios
-      .get('https://api.github.com/search/users', {
-        params: {per_page: 5, q: count.searchValue},
-      })
-      .then((res: any) => {
-        console.log('res search', res.data.items[0]);
-        setUserData(res.data.items);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-  };
+  const store = useSelector(getSearchValue);
 
   useEffect(() => {
-    // console.log(count.searchValue)
-    // if (count.searchValue) {
-    //   getSearchRepos();
-    //   getSearchUsers();
-    // } else {
-    //   getPublicRepos();
-    //   getUsers();
-    // }
-    // graphqlTest();
-    console.log(count.searchValue);
+    console.log(store.searchValue);
     refetch({
-      query: count.searchValue,
+      query: store.searchValue,
     });
     repoRefetch({
-      query: count.searchValue,
+      query: store.searchValue,
     });
-  }, [count]);
+  }, [store]);
 
-  const graphqlTest = () => {};
+ 
 
-  const GET_USERS = gql`
-    query ($query: String = "") {
-      search(query: $query, type: USER, first: 5) {
-        edges {
-          node {
-            ... on User {
-              id
-              login
-              name
-              avatarUrl
-              location
-              bio
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const GET_REPOS = gql`
-    query ($query: String = "") {
-      search(query: $query, type: REPOSITORY, first: 5) {
-        edges {
-          node {
-            ... on Repository {
-              id
-              description
-              name
-              updatedAt
-              stargazerCount
-              languages(first: 1) {
-                edges {
-                  node {
-                    id
-                    name
-                    color
-                  }
-                }
-              }
-              licenseInfo {
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const {loading, error, data, refetch} = useQuery(GET_USERS);
-  const {
-    loading: repoLoading,
-    error: repoError,
-    data: repoData,
-    refetch: repoRefetch,
-  } = useQuery(GET_REPOS);
+  const {data: userData, refetch} = useQuery(GET_USERS);
+  const {data: repoData, refetch: repoRefetch} = useQuery(GET_REPOS);
 
   return (
     <ScrollView style={styles.home}>
+      <Text style={styles.resultCount}>
+        {(repoData?.search.repositoryCount || 0) +
+          (userData?.search.userCount || 0)}{' '}
+        results
+      </Text>
       {repoData?.search.edges &&
-        data?.search.edges &&
-        [...repoData?.search.edges, ...data?.search.edges]
+        userData?.search.edges &&
+        [...repoData?.search.edges, ...userData?.search.edges]
           .sort((a, b) => {
             if (a?.node?.id > b?.node?.id) {
               return 1;
@@ -170,22 +45,14 @@ const ResultScreen = () => {
             return 0;
           })
           .map((row: any) =>
-            row.node.description ? (
-              <RepoItem repo={row.node} />
+            row.node.login ? (
+              <UserItem key={row.node.id} user={row.node} />
             ) : (
-              <UserItem user={row.node} />
+              <RepoItem key={row.node.id} repo={row.node} />
             ),
           )}
 
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          marginTop: 30,
-          height: 40,
-        }}>
+      <View style={styles.paginationContainer}>
         <View style={{flexDirection: 'row'}}>
           <Image
             style={{marginTop: 3}}
@@ -221,7 +88,6 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   textStyle: {
-  
     height: 17,
     fontFamily: 'Roboto',
     fontStyle: 'normal',
@@ -231,6 +97,22 @@ const styles = StyleSheet.create({
     color: '#166CD7',
     order: 1,
     flexGrow: 0,
+  },
+  paginationContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginTop: 30,
+    height: 40,
+  },
+  resultCount: {
+    fontSize: 21,
+    color: 'black',
+    marginLeft: 17,
+    marginTop: 30,
+    marginBottom: 15,
+    fontWeight: '500',
   },
 });
 export default ResultScreen;

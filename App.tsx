@@ -11,11 +11,10 @@ import {createStore} from 'redux';
 import reducer from './redux/reducers';
 import {setSearchValue} from './redux/actions';
 import {ApolloClient, InMemoryCache, ApolloProvider, gql} from '@apollo/client';
+import UserScreen from './screens/userScreen/UserScreen';
 
 const Stack = createNativeStackNavigator();
 const store = createStore(reducer);
-
-
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -42,7 +41,7 @@ const App = () => {
   const client = new ApolloClient({
     uri: 'https://api.github.com/graphql',
     cache: new InMemoryCache(),
-    headers:{Authorization:'bearer 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'}
+    headers: {Authorization: 'bearer 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'},
   });
   return (
     <ApolloProvider client={client}>
@@ -65,17 +64,22 @@ const App = () => {
               }}
             />
             <Stack.Screen
-              name="Profile"
-              component={ResultScreen}
+              name="User"
+              component={UserScreen}
               options={{
                 headerTitle: props => (
                   <Image
+                    style={{
+                      left: 0,
+                      position: 'absolute',
+                    }}
                     source={require('./assets/GitHub-Mark/PNG/GitHub-Mark-Light-32px.png')}
                   />
                 ),
                 headerStyle: {
                   backgroundColor: '#000',
                 },
+                headerBackVisible: false,
                 headerRight: props => <Header />,
               }}
             />
